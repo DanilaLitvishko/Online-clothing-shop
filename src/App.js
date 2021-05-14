@@ -38,7 +38,7 @@ const SneakersPage = () => (
 
 const WomensPage = () => (
   <div>
-    <h1>WOMENS PAGE</h1>
+    <h1>WOMENS NOT HUMAN PAGE</h1>
   </div>
 )
 
