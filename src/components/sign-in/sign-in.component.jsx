@@ -31,10 +31,8 @@ class SignIn extends React.Component {
                         password: ''
                     }}
                     validationSchema={SignInSchema}
-                    onSubmit={values =>  {
-                        try{
+                    onSubmit={async values =>  {
                         await auth.signInWithEmailAndPassword(values.email, values.password)
-                        }catch(error){}
                     }}    
                 >
                     {props =>(
