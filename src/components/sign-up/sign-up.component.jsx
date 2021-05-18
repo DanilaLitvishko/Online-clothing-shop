@@ -32,8 +32,10 @@ class SignUp extends React.Component{
                     validationSchema={SignUpSchema}
                     onSubmit={values =>  {
                         const {email, password, displayName} = values
-                        const {user} = auth.createUserWithEmailAndPassword(email, password)
-                        createUserProfileDocument(user, {displayName})
+                        try{
+                            const {user} = await auth.createUserWithEmailAndPassword(email, password)
+                            await createUserProfileDocument(user, {displayName})
+                        }catch(error){}
                     }}    
                 >
                     {props =>(
