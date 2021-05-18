@@ -26,7 +26,11 @@ class SignIn extends React.Component {
         try{
 
             await auth.signInWithEmailAndPassword(email, password)
+<<<<<<< HEAD
             this.state({ email: '', password: ''})
+=======
+            this.setState({ email: '', password: ''})
+>>>>>>> added card icon and cart dropdown
 
         }catch(error){
             console.log(error)

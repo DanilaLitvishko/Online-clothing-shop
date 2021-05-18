@@ -33,7 +33,10 @@ class Directory extends React.Component{
                   size: 'large',
                   id: 4,
                   linkUrl: 'womens',
+<<<<<<< HEAD
                   size: 'large'
+=======
+>>>>>>> added card icon and cart dropdown
                 },
                 {
                   title: 'mens',
@@ -41,7 +44,10 @@ class Directory extends React.Component{
                   size: 'large',
                   id: 5,
                   linkUrl: 'mens',
+<<<<<<< HEAD
                   size: 'large'
+=======
+>>>>>>> added card icon and cart dropdown
                 }
             ]
         }
