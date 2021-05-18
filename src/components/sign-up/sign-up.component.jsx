@@ -15,28 +15,11 @@ const theme = createMuiTheme({
     },
   });
 
-  const useStyles = makeStyles(theme => ({
-    container: {
-      display: 'flex',
-      flexWrap: 'wrap',
-    },
-    textField: {
-      marginLeft: theme.spacing(1),
-      marginRight: theme.spacing(1),
-      width: 200,
-    },
-    formGroup: {
-      alignItems: 'center'
-    }
-  }));
-  const classes = useStyles();
-
-
 class SignUp extends React.Component{
 
     render(){
         return(
-            <div className={classes.formGroup}>
+            <div>
                 <h2 className='title'>I do not have a account</h2>
                 <span>Sign up with your email and password</span>
                 <Formik
