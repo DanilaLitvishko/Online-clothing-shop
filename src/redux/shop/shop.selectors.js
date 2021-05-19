@@ -1,4 +1,3 @@
-import createPersistoid from 'redux-persist/es/createPersistoid';
 import {createSelector} from 'reselect';
 
 const selectShop = state => state.shop 
