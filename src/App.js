@@ -22,6 +22,26 @@ class App extends React.Component {
   componentDidMount(){
     const {checkUserSession} = this.props
     checkUserSession()
+
+
+    const {setCurrentUser} = this.props
+    
+    this.unsubscribeFromAuth = auth.onAuthStateChanged(async userAuth => {
+      if(userAuth){
+        const userRef = await createUserProfileDocument(userAuth);
+
+        userRef.onSnapshot(snapShot=>{
+          setCurrentUser({
+            currentUser:{ 
+              id: snapShot.id,
+              ...snapShot.data()
+            }
+          })
+        })
+      }
+        setCurrentUser(userAuth)
+      
+    })
   }
 
   componentWillUnmount(){
