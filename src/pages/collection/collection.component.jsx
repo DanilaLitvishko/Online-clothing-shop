@@ -1,4 +1,4 @@
-import React from 'react'
+ import React from 'react'
 import {connect} from 'react-redux'
 
 import CollectionItem from '../../components/collection-item/collection-item.component'
