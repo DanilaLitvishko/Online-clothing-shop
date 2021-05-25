@@ -53,6 +53,10 @@ export function* signOut(){
     }
 }
 
+export function* singUp({payload:{email, lastName, password}}){
+
+}
+
 export function* onGoogleSignInStart(){
     yield takeLatest(UserActionTypes.GOOGLE_SIGN_IN_START, signInWithGoogle)
 }
@@ -67,6 +71,10 @@ export function* onCheckUserSession(){
 
 export function* onSignOutStart(){
     yield takeLatest(UserActionTypes.SIGN_OUT_START, signOut)
+}
+
+export function* onSingUpStart(){
+    yield takeLatest(UserActionTypes.SIGN_OUT_START, singUp)
 }
 
 export function* userSagas(){
