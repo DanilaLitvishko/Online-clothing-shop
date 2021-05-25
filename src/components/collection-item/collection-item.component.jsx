@@ -1,25 +1,5 @@
 import React from 'react'
 
-<<<<<<< HEAD
-import './collection-item.styles.scss'
-
-const CollectionItem = ({ id, name, price, imageUrl }) => (
-    <div className='collection-item'>
-        <div
-            className='image'
-            style={{
-                backgroundImage : `url(${imageUrl})`
-            }}
-        />
-            <div className='collection-footer'>
-                <span className='name'>{ name }</span>
-                <span className='price'>{ price }</span>
-            </div>
-    </div>
-)
-
-export default CollectionItem
-=======
 import {connect} from 'react-redux'
 
 import CustomButton from '../custom-button/custom-button.component'
@@ -50,4 +30,3 @@ const mapDispatchToProps = dispatch => ({
 })
 
 export default connect(null, mapDispatchToProps)(CollectionItem)
->>>>>>> added card icon and cart dropdown

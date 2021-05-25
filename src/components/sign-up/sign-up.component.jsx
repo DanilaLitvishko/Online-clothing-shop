@@ -27,11 +27,7 @@ class SignUp extends React.Component{
 
         const { displayName, email, password, confirmPassword } = this.state
 
-<<<<<<< HEAD
-        if(password != confirmPassword){
-=======
         if(password !== confirmPassword){
->>>>>>> added card icon and cart dropdown
             alert("Passwords don't match!")
             return;
         }
