@@ -2,6 +2,7 @@ import React from 'react';
 import {connect} from 'react-redux'
 import { createStructuredSelector } from 'reselect'
 import {withRouter} from 'react-router-dom'
+import PropTypes from 'prop-types'
 
 import CustomButton from '../custom-button/custom-button.component'
 import CartItem from '../card-item/card-item.component'
@@ -10,7 +11,11 @@ import { toggleCartHidden } from '../../redux/cart/cart.actions'
 
 import './cart-dropdown.styles.scss'
 
-const CartDropdown = ({cartItems, history, dispatch}) => (
+const CartDropdown = (props) => {
+    
+    const {cartItems, history, dispatch} = props
+    
+    return(
     <div className='cart-dropdown'>
         <div className='cart-items'>
             {
@@ -29,7 +34,13 @@ const CartDropdown = ({cartItems, history, dispatch}) => (
             GO TO CHECKOUT
         </CustomButton>
     </div> 
-)
+)}
+
+CartDropdown.propTypes = {
+    cartItems: PropTypes.array,
+    history: PropTypes.object,
+    dispatch: PropTypes.func
+}
 
 const mapStateToProps = createStructuredSelector({
     cartItems: selectCartItems
