@@ -1,9 +1,11 @@
-//const exist = (cartItem, cartItemToAdd) => cartItem.id === cartItemToAdd.id
+function checkExisting(arr, val) {
+    return arr.some(function(arrVal) {
+      return val.id === arrVal.id;
+    });
+  }
 
 export const addItemToCart = (cartItems, cartItemToAdd) =>{
-    const existingCartItem = cartItems.find(
-        cartItem=> cartItem.id === cartItemToAdd.id
-    )
+    const existingCartItem = checkExisting(cartItems, cartItemToAdd)
     if(existingCartItem){
         return cartItems.map(cartItem=>
             cartItem.id === cartItemToAdd.id
