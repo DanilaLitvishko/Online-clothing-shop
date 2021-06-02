@@ -1,4 +1,4 @@
-import ShopActionTypes from '../../../../src/redux/shop/shop.types'
+import ShopActionTypes from './shop.types'
 
 export const fetchCollectionsStart = () => ({
     type: ShopActionTypes.FETCH_COLLECTIONS_START
