@@ -1,6 +1,5 @@
 import React from 'react';
-import {connect} from 'react-redux'
-import { createStructuredSelector } from 'reselect'
+import {useDispatch, useSelector} from 'react-redux'
 import {withRouter} from 'react-router-dom'
 import PropTypes from 'prop-types'
 
@@ -16,7 +15,11 @@ import {
 
 const CartDropdown = (props) => {
     
-    const {cartItems, history, dispatch} = props
+    const dispatch = useDispatch()
+
+    const {history} = props
+
+    const cartItems = useSelector(selectCartItems)
     
     return(
         <CartDropdownContainer>
@@ -45,8 +48,4 @@ CartDropdown.propTypes = {
     dispatch: PropTypes.func
 }
 
-const mapStateToProps = createStructuredSelector({
-    cartItems: selectCartItems
-})
-
-export default withRouter(connect(mapStateToProps)(CartDropdown)); 
+export default withRouter(CartDropdown); 
