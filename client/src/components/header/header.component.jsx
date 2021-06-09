@@ -29,6 +29,9 @@ const Header = () => {
             <OptionLink to="/shop">
                 SHOP
             </OptionLink>
+            <OptionLink to="/chat">
+                CHAT
+            </OptionLink>
             <OptionLink to="/shop">
                 CONTACT
             </OptionLink>
