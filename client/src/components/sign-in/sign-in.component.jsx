@@ -1,11 +1,18 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {useDispatch} from 'react-redux'
-
-import FormInput from '../form-input/form-input.component'
 
 import CustomButton from '../custom-button/custom-button.component'
 
 import {googleSignInStart, emailSignInStart} from '../../redux/user/user.actions'
+
+import { Formik} from 'formik';
+
+import SignInSchema from './sign-in.schema'
+
+import {TextField} from '@material-ui/core';
+
+import {ThemeProvider, createMuiTheme} from '@material-ui/core/styles'
+import { green } from '@material-ui/core/colors';
 
 import {
     SignInContainer,
@@ -13,19 +20,13 @@ import {
     ButtonsBarContainer
   } from './sign-in.styles';
 
+  const theme = createMuiTheme({
+    palette: {
+      primary: green,
+    },
+  });
+
 const SignIn = () => {
-
-    const [userCredentials, setCredentials] = useState({
-        email: '', 
-        password: ''
-    })
-
-    const {email, password} = userCredentials
-
-    const handleChange = event => {
-        const {value, name } = event.target;
-        setCredentials({...userCredentials, [name]: value})
-    }
 
     const dispatch = useDispatch()
 
@@ -33,38 +34,59 @@ const SignIn = () => {
         dispatch(googleSignInStart())
     }
 
-    const handleEmailSignInStart = () =>{
-        dispatch(emailSignInStart({email, password}))
-    }
-
     return (
         <SignInContainer>
             <SignInTitle>I already have account</SignInTitle>
             <span>Sign in with your email and password</span>
-            <form>
-                <FormInput 
-                    name='email' 
-                    type='email' 
-                    handleChange={handleChange} 
-                    value={email}
-                    label='email'
-                    required
-                />
-                <FormInput 
-                    name='password' 
-                    type='password' 
-                    value={password} 
-                    handleChange={handleChange}
-                    label='password'
-                    required
-                />
-                <ButtonsBarContainer>
-                    <CustomButton type='button' onClick={handleEmailSignInStart}> Sign in </CustomButton>
-                    <CustomButton type='button' onClick={handleGoogleSignInStart} isGoogleSignIn>
-                        Sign in with Google
-                    </CustomButton>
-                </ButtonsBarContainer>
-            </form>
+            <Formik
+                    initialValues={{
+                        email: '',
+                        password: ''
+                    }}
+                    validationSchema={SignInSchema}
+                    onSubmit={values =>  {
+                        dispatch(emailSignInStart(values))
+                    }}    
+                >
+                    {props =>(
+                            <form onSubmit={props.handleSubmit}>
+                                <ThemeProvider theme={theme}>
+                                    <TextField 
+                                        name='email' 
+                                        label='email' 
+                                        value={props.values.email}
+                                        helperText={props.errors.email}
+                                        onChange={props.handleChange}
+                                        error={Boolean(props.errors.email)}
+                                        variant="outlined"
+                                        fullWidth={true}
+                                        width={150}
+                                        margin="normal"
+                                    />
+
+                                    <TextField 
+                                        name='password' 
+                                        label='password' 
+                                        type='password' 
+                                        value={props.values.password} 
+                                        onChange={props.handleChange}
+                                        helperText={props.errors.password}
+                                        error={Boolean(props.errors.password)}
+                                        fullWidth={true}
+                                        width={150}
+                                        variant="outlined"
+                                        margin="normal"
+                                    />
+                                </ThemeProvider>
+                                <ButtonsBarContainer>
+                                    <CustomButton type='submit'> SIGN IN</CustomButton>
+                                    <CustomButton type='button' onClick={handleGoogleSignInStart} isGoogleSignIn>
+                                        Sign in with Google
+                                    </CustomButton>
+                                </ButtonsBarContainer>
+                            </form>
+                    )}
+                </Formik>
         </SignInContainer>
     )
 }
