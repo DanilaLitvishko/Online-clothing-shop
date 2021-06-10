@@ -21,23 +21,18 @@ import ChatSchema from './chat.schema'
 let socket
 
 const ChatPage = () => {
-    const ENDPOINT = 'localhost:5000'
+    const ENDPOINT = 'http://localhost:5000'
     const user = useSelector(selectCurrentUser)
     const [rooms, setRooms] = useState([])
     useEffect(() => {
         socket = io(ENDPOINT)
-        return () => {
-            socket.emit('disconnect')
-            socket.off()
-        }
     }, [ENDPOINT])
-
     useEffect(() => {
         socket.on('output-rooms', rooms =>{
             setRooms(rooms)
+            console.log(rooms)
         })
     }, [])
-
     return (
         <div>
             ChatPage
@@ -71,7 +66,7 @@ const ChatPage = () => {
                             </form>
                     )}
                 </Formik>
-                <RoomList/>
+                <RoomList rooms={rooms}/>
         </div>
     )
 }
