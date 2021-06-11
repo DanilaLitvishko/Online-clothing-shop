@@ -21,26 +21,13 @@ const ChatPage = lazy(() => import('./pages/chat/chat.component'))
 
 const App = () => {
 
-  const [currentUser, setCurrentUser] = useState('')
+  const currentUser = useSelector(selectCurrentUser)
 
   const dispatch = useDispatch()
   
   useEffect(()=>{
     dispatch(checkUserSession())
   },[dispatch])
-
-useEffect(() => {
-    const verifyUser = async() =>{
-      const res = await fetch('http://localhost:5000/verifyuser', {
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' }
-      });
-      const data = await res.json()
-      console.log(data)
-      selectCurrentUser(data)
-    }
-    verifyUser()
-  }, [])
 
   return (
     <div>

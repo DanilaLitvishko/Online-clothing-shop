@@ -35,10 +35,9 @@ const alertError = (err) => {
 }
 module.exports.signup = async (req, res) =>{
     const {displayName, email, password} = req.body
-    console.log(req.body)
-    const id = ID()
     User.sync({ alter: true })
     try{
+        const id = ID()
         const user = await User.create({displayName, email, password, id})
         const token = createJWT(user.id)
         res.cookie('jwt', token, {httpOnly: true, maxAge: maxAge * 1000})
@@ -54,34 +53,29 @@ module.exports.login = (req, res) =>{
     try{
         User.findAll({where:{email:email, password:password}, raw:true}).then(users=>{
             const user = users[0]
-            console.log(user)
             const token = createJWT(user.id)
             res.cookie('jwt', token, {httpOnly: true, maxAge: maxAge * 1000})
             res.status(201).json({user})
-        }).catch(err=>console.log(err));
+        }).catch(err=>{});
     }catch(err){
         let errors = alertError(err)
         res.status(400).json({errors : errors})
     }
 }
 
-module.exports.verifuyser = (req, res, next) => {
+module.exports.verifyuser = (req, res) => {
     const token = req.cookies.jwt
     if(token){
         jwt.verify(token, 'chatroom secret', (err, decodedToken) => {
             if(err){
                 console.log(err)
             }else{
-                console.log(decodedToken)
                 const {id} = decodedToken
                 const user = User.findAll({where:{id:id}, raw:true}).then(user => {
                     res.json(user[0])
-                    next()
                 })
             }
         })
-    }else{
-        next()
     }
 }
 

@@ -1,10 +1,15 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import io from 'socket.io-client'
 import {useParams} from 'react-router-dom'
 import { Formik} from 'formik';
 import {TextField} from '@material-ui/core';
 import {ThemeProvider, createMuiTheme} from '@material-ui/core/styles'
 import { green } from '@material-ui/core/colors';
+import {useSelector} from 'react-redux'
+
 import CustomButton from '../../components/custom-button/custom-button.component'
+import { selectCurrentUser } from '../../redux/user/user.selectors'
+import Message from '../message/message.component'
 
 const theme = createMuiTheme({
     palette: {
@@ -12,20 +17,38 @@ const theme = createMuiTheme({
     },
   });
 
+let socket
 
 const Chat = () => {
     const {id, name} = useParams()
     const [messages, setMessages] = useState([])
+    const currentUser = useSelector(selectCurrentUser)
+
+    const ENDPOINT = 'http://localhost:5000'
+    useEffect(() => {
+        socket = io(ENDPOINT)
+    }, [ENDPOINT])
+    useEffect(() => {
+        socket.emit('get-messages-history', id)
+        socket.on('output-messages', res => {
+            setMessages(res)
+        })
+    }, [])
+    useEffect(() => {
+        socket.on('message', message =>{
+            setMessages([...messages, message])
+        })
+    }, [messages])
+
     return (
         <div>
-            <p>{id}</p>
             <p>{name}</p>
             <Formik
                     initialValues={{
                         message: '',
                     }}
                     onSubmit={values => {
-                        setMessages([...messages, values.message])
+                        socket.emit('send-message', values.message, id, currentUser.id, currentUser.displayName)
                     }}    
                 >
                     {props =>(
@@ -48,6 +71,9 @@ const Chat = () => {
                             </form>
                     )}
                 </Formik>
+                {
+                    messages && messages.map(({id, ...otherSectionProps}) => <Message key={id} {...otherSectionProps}/>)
+                }
         </div>
     )
 }

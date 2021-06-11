@@ -30,7 +30,6 @@ const ChatPage = () => {
     useEffect(() => {
         socket.on('output-rooms', rooms =>{
             setRooms(rooms)
-            console.log(rooms)
         })
     }, [])
     return (

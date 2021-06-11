@@ -60,11 +60,11 @@ app.post('/payment', (req, res) => {
 })
 
 io.on('connection', (socket) => {
-    console.log(socket.id)
     Room.sync({ alter: true })
+    Message.sync({ alter: true })
     Room.findAll({raw:true}).then(rooms=>{
         socket.emit('output-rooms', rooms)
-    }).catch(err=>console.log(err));
+    }).catch(err=>{});
 
     socket.on('create-room', name => {
         const id = ID()
@@ -73,7 +73,22 @@ io.on('connection', (socket) => {
             id: id
         }).then(res=>{
            
-        }).catch(err=>console.log(err));
+        }).catch(err=>{});
+    })
+
+    socket.on('get-messages-history', async room_id =>{
+        const messages = await Message.findAll({where:{roomId:room_id}, raw:true})
+        socket.emit('output-messages',  messages)
+    })
+
+    socket.on('send-message', async (message, room_id, user_id, user_name) => {
+        const createdMessage = await Message.create({
+            name: user_name,
+            roomId: room_id,
+            userId: user_id,
+            text: message
+        })
+        io.to(room_id).emit('message', createdMessage);
     })
 });
 

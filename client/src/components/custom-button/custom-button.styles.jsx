@@ -42,7 +42,7 @@ const getButtonStyles = props => {
 };
 
 export const CustomButtonContainer = styled.button`
-  /*min-width: 165px;
+  min-width: 165px;
   width: auto;
   height: 50px;
   letter-spacing: 0.5px;
@@ -55,5 +55,5 @@ export const CustomButtonContainer = styled.button`
   cursor: pointer;
   display: flex;
   justify-content: center;
-  ${getButtonStyles}*/
+  ${getButtonStyles}
 `;
