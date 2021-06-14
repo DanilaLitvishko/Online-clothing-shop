@@ -1,6 +1,6 @@
 import React from 'react';
 import {useDispatch, useSelector} from 'react-redux'
-import {withRouter} from 'react-router-dom'
+import {useHistory, withRouter} from 'react-router-dom'
 import PropTypes from 'prop-types'
 
 import CartItem from '../cart-item/cart-item.component'
@@ -13,13 +13,18 @@ import {
     CartItemsContainer
   } from './cart-dropdown.styles';
 
-const CartDropdown = (props) => {
+const CartDropdown = () => {
     
     const dispatch = useDispatch()
 
-    const {history} = props
+    const history = useHistory()
 
     const cartItems = useSelector(selectCartItems)
+
+    const handleDropdown = () => {
+        history.push('/checkout')
+        dispatch(toggleCartHidden())
+    }
     
     return(
         <CartDropdownContainer>
@@ -32,20 +37,10 @@ const CartDropdown = (props) => {
                     : <EmptyMessageContainer>Your cart is empty</EmptyMessageContainer>
                 } 
             </CartItemsContainer>
-            <CartDropdownButton onClick={() => {
-                history.push('/checkout')
-                dispatch(toggleCartHidden())
-            }}
-            >
+            <CartDropdownButton onClick={handleDropdown}>
                 GO TO CHECKOUT
             </CartDropdownButton>
         </CartDropdownContainer> 
 )}
-
-CartDropdown.propTypes = {
-    cartItems: PropTypes.array,
-    history: PropTypes.object,
-    dispatch: PropTypes.func
-}
 
 export default withRouter(CartDropdown); 
