@@ -7,7 +7,7 @@ const RoomList = ({rooms}) => {
         <div>
             {
                 rooms && rooms.map(room => (
-                    <Link key={room.id} to={'/chat/' + room.id + '/' + room.name}>
+                    <Link key={room.id} to={`/chat/${room.id}/${room.name}`}>
                         <Room  name={room.name}/>
                     </Link>
                 ))

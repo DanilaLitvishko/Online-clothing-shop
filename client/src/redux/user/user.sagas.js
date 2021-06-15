@@ -3,18 +3,9 @@ import axios from 'axios'
 
 import UserActionTypes from './user.types'
 
-import { auth, googleProvider} from '../../firebase/firebase.utils'
+import { auth, googleProvider} from '../../utils/firebase.utils'
 
 import {signInSuccess, signInFailure, signOutSuccess, signOutFailure, signUpSuccess, signUpFailure} from './user.actions'
-
-export function* signInWithGoogle(){
-    try{
-        const { user } = yield auth.signInWithPopup(googleProvider)
-        //yield getSnapshotFromUserAuth(user)
-    }catch(error){
-        yield put(signInFailure(error))
-    }
-}
 
 export function* signInWithEmail({payload:{email, password}}){
     try{
@@ -28,8 +19,7 @@ export function* signInWithEmail({payload:{email, password}}){
 export function* isUserAuthenticated(){
     try{
         const {data} = yield axios.get('http://localhost:5000/verify', {withCredentials: true})
-        if(!data) return;
-        yield put(signInSuccess(data))
+        if(data) yield put(signInSuccess(data))
     }catch(error){
         yield put(signInFailure(error))
     }
@@ -54,10 +44,6 @@ export function* singUp({payload:{email, displayName, password}}){
     }
 }
 
-export function* onGoogleSignInStart(){
-    yield takeLatest(UserActionTypes.GOOGLE_SIGN_IN_START, signInWithGoogle)
-}
-
 export function* onEmailSignInStart(){
     yield takeLatest(UserActionTypes.EMAIL_SIGN_IN_START, signInWithEmail)
 }
@@ -76,7 +62,6 @@ export function* onSingUpStart(){
 
 export function* userSagas(){
     yield all([
-        call(onGoogleSignInStart), 
         call(onEmailSignInStart), 
         call(onCheckUserSession),
         call(onSignOutStart),

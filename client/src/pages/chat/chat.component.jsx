@@ -9,6 +9,7 @@ import RoomList from '../../components/room-list/room-list.component'
 import {useSelector} from 'react-redux'
 import { selectCurrentUser } from '../../redux/user/user.selectors'
 import CustomButton from '../../components/custom-button/custom-button.component'
+import {socket} from '../../utils/socket.utils'
 
 import ChatSchema from './chat.schema'
 
@@ -18,20 +19,16 @@ import ChatSchema from './chat.schema'
     },
   });
 
-let socket
-
 const ChatPage = () => {
-    const ENDPOINT = 'http://localhost:5000'
     const user = useSelector(selectCurrentUser)
     const [rooms, setRooms] = useState([])
-    useEffect(() => {
-        socket = io(ENDPOINT)
-    }, [ENDPOINT])
+
     useEffect(() => {
         socket.on('output-rooms', rooms =>{
             setRooms(rooms)
         })
     }, [])
+    
     return (
         <div>
             ChatPage

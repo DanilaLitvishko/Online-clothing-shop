@@ -80,9 +80,6 @@ const SignIn = () => {
                                 </ThemeProvider>
                                 <ButtonsBarContainer>
                                     <CustomButton type='submit'> SIGN IN</CustomButton>
-                                    <CustomButton type='button' onClick={handleGoogleSignInStart} isGoogleSignIn>
-                                        Sign in with Google
-                                    </CustomButton>
                                 </ButtonsBarContainer>
                             </form>
                     )}

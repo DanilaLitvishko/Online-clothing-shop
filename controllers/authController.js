@@ -48,34 +48,26 @@ module.exports.signup = async (req, res) =>{
     }
 }
 
-module.exports.login = (req, res) =>{
+module.exports.login = async (req, res) =>{
     const {email, password} = req.body
     try{
-        User.findAll({where:{email:email, password:password}, raw:true}).then(users=>{
-            const user = users[0]
-            const token = createJWT(user.id)
-            res.cookie('jwt', token, {httpOnly: true, maxAge: maxAge * 1000})
-            res.status(201).json({user})
-        }).catch(err=>{});
+        const user = await User.findOne({where:{email:email, password:password}, raw:true})
+        const token = createJWT(user.id)
+        res.cookie('jwt', token, {httpOnly: true, maxAge: maxAge * 1000})
+        res.status(201).json({user})
     }catch(err){
         let errors = alertError(err)
         res.status(400).json({errors : errors})
     }
 }
 
-module.exports.verifyuser = (req, res) => {
+module.exports.verifyuser = async (req, res) => {
     const token = req.cookies.jwt
     if(token){
-        jwt.verify(token, 'chatroom secret', (err, decodedToken) => {
-            if(err){
-                console.log(err)
-            }else{
-                const {id} = decodedToken
-                const user = User.findAll({where:{id:id}, raw:true}).then(user => {
-                    res.json(user[0])
-                })
-            }
-        })
+        const decodedToken = jwt.verify(token, 'chatroom secret')
+        const {id} = decodedToken
+        const user = await User.findOne({where:{id:id}, raw:true})
+        res.json(user)
     }
 }
 

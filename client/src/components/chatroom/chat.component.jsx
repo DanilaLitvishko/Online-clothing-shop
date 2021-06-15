@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import io from 'socket.io-client'
 import {useParams} from 'react-router-dom'
 import { Formik} from 'formik';
 import {TextField} from '@material-ui/core';
@@ -10,6 +9,7 @@ import {useSelector} from 'react-redux'
 import CustomButton from '../../components/custom-button/custom-button.component'
 import { selectCurrentUser } from '../../redux/user/user.selectors'
 import Message from '../message/message.component'
+import {socket} from '../../utils/socket.utils'
 
 const theme = createMuiTheme({
     palette: {
@@ -17,17 +17,11 @@ const theme = createMuiTheme({
     },
   });
 
-let socket
-
 const Chat = () => {
     const {id, name} = useParams()
     const [messages, setMessages] = useState([])
     const currentUser = useSelector(selectCurrentUser)
 
-    const ENDPOINT = 'http://localhost:5000'
-    useEffect(() => {
-        socket = io(ENDPOINT)
-    }, [ENDPOINT])
     useEffect(() => {
         socket.emit('get-messages-history', id)
         socket.on('output-messages', res => {
@@ -72,7 +66,7 @@ const Chat = () => {
                     )}
                 </Formik>
                 {
-                    messages && messages.map(({id, ...otherSectionProps}) => <Message key={id} {...otherSectionProps}/>)
+                    messages.map(({id, ...otherSectionProps}) => <Message key={id} {...otherSectionProps}/>)
                 }
         </div>
     )
