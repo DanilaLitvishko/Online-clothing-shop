@@ -1,7 +1,6 @@
 import React from 'react';
 import {useDispatch, useSelector} from 'react-redux'
 import {useHistory, withRouter} from 'react-router-dom'
-import PropTypes from 'prop-types'
 
 import CartItem from '../cart-item/cart-item.component'
 import { selectCartItems } from '../../redux/cart/cart.selectors'

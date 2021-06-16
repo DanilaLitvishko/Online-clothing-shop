@@ -21,10 +21,10 @@
     "csurf": "^1.11.0",
     "dotenv": "7.0.0",
     "express": "^4.16.4",
-    "firebase-admin": "^9.9.0",
+    "jsonwebtoken": "^8.5.1",
     "pg": "^8.6.0",
     "sequelize": "^6.6.2",
-    "socket.io": "^4.1.2",
+    "socket.io": "^2.3.0",
     "stripe": "6.28.0"
   },
   "devDependencies": {

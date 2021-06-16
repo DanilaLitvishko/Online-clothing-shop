@@ -1,35 +1,14 @@
 import {takeLatest, put, all, call} from 'redux-saga/effects'
+import axios from 'axios'
 
 import UserActionTypes from './user.types'
 
-import { auth, googleProvider, createUserProfileDocument, getCurrentUser } from '../../firebase/firebase.utils'
-
 import {signInSuccess, signInFailure, signOutSuccess, signOutFailure, signUpSuccess, signUpFailure} from './user.actions'
-
-export function* getSnapshotFromUserAuth(userAuth, additionalData){
-    try{
-        const userRef = yield call(createUserProfileDocument, userAuth, additionalData)
-        const userSnapshot = yield userRef.get()
-        yield put(signInSuccess({id: userSnapshot.id, ...userSnapshot.data()}))
-    }catch(error){
-        yield put(signInFailure(error))
-    }
-}
-
-export function* signInWithGoogle(){
-    try{
-        const { user } = yield auth.signInWithPopup(googleProvider)
-        yield getSnapshotFromUserAuth(user)
-        
-    }catch(error){
-        yield put(signInFailure(error))
-    }
-}
 
 export function* signInWithEmail({payload:{email, password}}){
     try{
-        const { user } = yield auth.signInWithEmailAndPassword(email, password)
-        yield getSnapshotFromUserAuth(user)
+        const {data} = yield axios.post('http://localhost:5000/login', {email, password }, {withCredentials: true})
+        yield put(signInSuccess(data.user))
     }catch(error){
         put(signInFailure(error))
     }
@@ -37,9 +16,8 @@ export function* signInWithEmail({payload:{email, password}}){
 
 export function* isUserAuthenticated(){
     try{
-        const userAuth = yield getCurrentUser()
-        if(!userAuth) return;
-        yield getSnapshotFromUserAuth(userAuth)
+        const {data} = yield axios.get('http://localhost:5000/verify', {withCredentials: true})
+        if(data) yield put(signInSuccess(data))
     }catch(error){
         yield put(signInFailure(error))
     }
@@ -47,8 +25,8 @@ export function* isUserAuthenticated(){
 
 export function* signOut(){
     try{
-        yield auth.signOut()
-        yield (put(signOutSuccess()))
+        const {data} = yield axios.get('http://localhost:5000/logout', {withCredentials: true})
+        yield (put(signOutSuccess(data.user)))
     }catch(error){
         yield put(signOutFailure(error))
     }
@@ -56,19 +34,12 @@ export function* signOut(){
 
 export function* singUp({payload:{email, displayName, password}}){
     try{
-        const { user } = yield auth.createUserWithEmailAndPassword(email, password)
-        yield put(signUpSuccess({user, additionalData:{displayName}}))
+        const {data} = yield axios.post('http://localhost:5000/signup', { displayName, email, password }, {withCredentials: true})
+        yield put(signUpSuccess(data.user))
+        yield put(signInSuccess(data.user))
     }catch(error){
         yield put(signUpFailure(error))
     }
-}
-
-export function* signInAfterSignUp({payload:{user, additionalData}}){
-    yield getSnapshotFromUserAuth(user, additionalData)
-}
-
-export function* onGoogleSignInStart(){
-    yield takeLatest(UserActionTypes.GOOGLE_SIGN_IN_START, signInWithGoogle)
 }
 
 export function* onEmailSignInStart(){
@@ -87,17 +58,11 @@ export function* onSingUpStart(){
     yield takeLatest(UserActionTypes.SIGN_UP_START, singUp)
 }
 
-export function* onSignUpSuccess(){
-    yield takeLatest(UserActionTypes.SIGN_UP_SUCCESS, signInAfterSignUp)
-}
-
 export function* userSagas(){
     yield all([
-        call(onGoogleSignInStart), 
         call(onEmailSignInStart), 
         call(onCheckUserSession),
         call(onSignOutStart),
         call(onSingUpStart),
-        call(onSignUpSuccess)
     ])
 }

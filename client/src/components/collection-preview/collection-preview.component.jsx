@@ -16,10 +16,15 @@ const CollectionPreview = ({ title, items, history, match, routeName }) => (
     </TitleContainer>
     <PreviewContainer>
       {items
-        .filter((item, idx) => idx < 4)
-        .map(item => (
-          <CollectionItem key={item.id} item={item} />
-        ))}
+        .reduce((acc, item, idx) => {
+          const newAcc = [...acc]
+          if(idx < 4){
+            newAcc.push(<CollectionItem key={item.id} item={item} />)
+            return newAcc
+          }
+          return newAcc
+        }, [])
+      }
     </PreviewContainer>
   </CollectionPreviewContainer>
 );

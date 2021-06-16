@@ -1,6 +1,5 @@
  
 import styled, { css } from 'styled-components';
-import {Button} from '@material-ui/core';
 
 const buttonStyles = css`
   background-color: black;
@@ -41,7 +40,7 @@ const getButtonStyles = props => {
   return props.inverted ? invertedButtonStyles : buttonStyles;
 };
 
-export const CustomButtonContainer = styled(Button)`
+export const CustomButtonContainer = styled.button`
   min-width: 165px;
   width: auto;
   height: 50px;

@@ -1,11 +1,23 @@
 const express = require('express')
+const app = express()
+const cors = require('cors')
+const cookieParser = require('cookie-parser')
+var corsOptions = {
+    origin: 'http://localhost:3000',
+    credentials: true,
+    optionsSuccessStatus: 200 // For legacy browser support
+}
+const authRoutes = require('./routes/authRoutes')
+
+app.use(cors(corsOptions));
+
 const bodyParser = require('body-parser')
 const path = require('path')
+const ID = require('./ID')
 if(process.env.NODE_ENV !== 'production') require('dotenv').config()
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY)
 
-const app = express()
 const port = process.env.PORT || 5000
 
 const http = require('http').createServer(app);
@@ -14,7 +26,8 @@ const io = socketio(http);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}))
-
+app.use(cookieParser());
+app.use(authRoutes)
 
 if(process.env.NODE_ENV === 'production'){
     app.use(express.static(path.join(__dirname, 'client/build')))
@@ -24,19 +37,12 @@ if(process.env.NODE_ENV === 'production'){
     })
 }
 
-const User = require('./models/user')
 const Room = require('./models/room')
 const Message = require('./models/message')
 
-const Sequelize = require("sequelize");
-const sequelize = new Sequelize("test", "postgres", "postgres", {
-  dialect: "postgres"
-});
-
-/*sequelize.sync().then(result=>{
-    console.log(result);
-})
-.catch(err=> console.log(err));*/
+app.get('/', (req, res) => {
+    res.sendFile(__dirname + '/index.html');
+  });
 
 app.post('/payment', (req, res) => {
     const body = {
@@ -54,54 +60,35 @@ app.post('/payment', (req, res) => {
 })
 
 io.on('connection', (socket) => {
-    console.log(socket.id)
-    Room.find().then(result => {
-        socket.emit('output-rooms', result)
-    })
-    socket.on('create-room', name => {
-        console.log(name)
-        const room = new Room({ name });
-        room.save().then(result => {
-            io.emit('room-created', result)
-        })
-    })
-    socket.on('join', ({ name, room_id, user_id }) => {
-        const { error, user } = addUser({
-            socket_id: socket.id,
-            name,
-            room_id,
-            user_id
-        })
-        socket.join(room_id);
-        if (error) {
-            console.log('join error', error)
-        } else {
-            console.log('join user', user)
-        }
-    })
-    socket.on('sendMessage', (message, room_id, callback) => {
-        const user = getUser(socket.id);
-        const msgToStore = {
-            name: user.name,
-            user_id: user.user_id,
-            room_id,
-            text: message
-        }
-        console.log('message', msgToStore)
-        const msg = new Message(msgToStore);
-        msg.save().then(result => {
-            io.to(room_id).emit('message', result);
-            callback()
-        })
+    Room.sync({ alter: true })
+    Message.sync({ alter: true })
+    Room.findAll({raw:true}).then(rooms=>{
+        socket.emit('output-rooms', rooms)
+    }).catch(err=>{});
 
+    socket.on('create-room', name => {
+        const id = ID()
+        Room.create({
+            name: name,
+            id: id
+        }).then(res=>{
+           
+        }).catch(err=>{});
     })
-    socket.on('get-messages-history', room_id => {
-        Message.find({ room_id }).then(result => {
-            socket.emit('output-messages', result)
+
+    socket.on('get-messages-history', async room_id =>{
+        const messages = await Message.findAll({where:{roomId:room_id}, raw:true})
+        socket.emit('output-messages',  messages)
+    })
+
+    socket.on('send-message', async (message, room_id, user_id, user_name) => {
+        const createdMessage = await Message.create({
+            name: user_name,
+            roomId: room_id,
+            userId: user_id,
+            text: message
         })
-    })
-    socket.on('disconnect', () => {
-        const user = removeUser(socket.id);
+        io.to(room_id).emit('message', createdMessage);
     })
 });
 

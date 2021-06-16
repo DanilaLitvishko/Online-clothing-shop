@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import io from 'socket.io-client'
 import { Formik} from 'formik';
 import {TextField} from '@material-ui/core';
 import {ThemeProvider, createMuiTheme} from '@material-ui/core/styles'
@@ -9,6 +8,7 @@ import RoomList from '../../components/room-list/room-list.component'
 import {useSelector} from 'react-redux'
 import { selectCurrentUser } from '../../redux/user/user.selectors'
 import CustomButton from '../../components/custom-button/custom-button.component'
+import {socket} from '../../utils/socket.utils'
 
 import ChatSchema from './chat.schema'
 
@@ -18,26 +18,16 @@ import ChatSchema from './chat.schema'
     },
   });
 
-let socket
-
 const ChatPage = () => {
-    const ENDPOINT = 'localhost:5000'
     const user = useSelector(selectCurrentUser)
     const [rooms, setRooms] = useState([])
-    useEffect(() => {
-        socket = io(ENDPOINT)
-        return () => {
-            socket.emit('disconnect')
-            socket.off()
-        }
-    }, [ENDPOINT])
 
     useEffect(() => {
         socket.on('output-rooms', rooms =>{
             setRooms(rooms)
         })
     }, [])
-
+    
     return (
         <div>
             ChatPage
@@ -71,7 +61,7 @@ const ChatPage = () => {
                             </form>
                     )}
                 </Formik>
-                <RoomList/>
+                <RoomList rooms={rooms}/>
         </div>
     )
 }

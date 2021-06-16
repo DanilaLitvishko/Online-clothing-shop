@@ -21,7 +21,7 @@ const theme = createMuiTheme({
   });
 
 const SignUp = () => {
-
+    
     const dispatch = useDispatch()
         return(
             <SignUpContainer>
