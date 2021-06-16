@@ -64,9 +64,8 @@ module.exports.login = async (req, res) =>{
 module.exports.verifyuser = async (req, res) => {
     const token = req.cookies.jwt
     if(token){
-        const decodedToken = jwt.verify(token, 'chatroom secret')
-        const {id} = decodedToken
-        const user = await User.findOne({where:{id:id}, raw:true})
+        const {id} = jwt.verify(token, 'chatroom secret')
+        const user = await User.findOne({where:{id}, raw:true})
         res.json(user)
     }
 }

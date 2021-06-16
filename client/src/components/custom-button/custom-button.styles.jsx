@@ -1,6 +1,5 @@
  
 import styled, { css } from 'styled-components';
-import {Button} from '@material-ui/core';
 
 const buttonStyles = css`
   background-color: black;

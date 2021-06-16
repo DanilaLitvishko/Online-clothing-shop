@@ -3,8 +3,6 @@ import axios from 'axios'
 
 import UserActionTypes from './user.types'
 
-import { auth, googleProvider} from '../../utils/firebase.utils'
-
 import {signInSuccess, signInFailure, signOutSuccess, signOutFailure, signUpSuccess, signUpFailure} from './user.actions'
 
 export function* signInWithEmail({payload:{email, password}}){

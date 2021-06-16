@@ -3,7 +3,7 @@ import {useDispatch} from 'react-redux'
 
 import CustomButton from '../custom-button/custom-button.component'
 
-import {googleSignInStart, emailSignInStart} from '../../redux/user/user.actions'
+import {emailSignInStart} from '../../redux/user/user.actions'
 
 import { Formik} from 'formik';
 
@@ -29,10 +29,6 @@ import {
 const SignIn = () => {
 
     const dispatch = useDispatch()
-
-    const handleGoogleSignInStart = () => {
-        dispatch(googleSignInStart())
-    }
 
     return (
         <SignInContainer>
